@@ -7,6 +7,7 @@ let selectedAccount;
 let tokenContract;
 let isInitialized = false;
 let accountList = [];
+let amountList = [];
 
 export const init = async () => {
   let provider = window.ethereum;
@@ -50,31 +51,39 @@ export const claimToken = async () => {
     .send({ from: selectedAccount });
 };
 
+export const isProcessed = async () => {
+  if (!isInitialized) {
+    await init();
+  }
+
+  return await tokenContract.methods
+    .getProcessedAirdrop(selectedAccount)
+    .call();
+};
+
 export const isWhitelisted = async () => {
   if (!isInitialized) {
     await init();
   }
 
   accountList = await tokenContract.methods.getWhitelistedAddress().call();
+  amountList = await tokenContract.methods.getAllocatedAmount().call();
 
   let flag = false;
   let i;
 
-  console.log(accountList);
-
   for (i = 0; i < accountList.length; i++) {
-    console.log(accountList[i]);
     if (
       accountList[i]
         .toLowerCase()
         .localeCompare(selectedAccount.toLowerCase()) === 0
     ) {
       flag = true;
-      return flag;
+      return await [flag, Web3.utils.fromWei(`${amountList[i]}`, "ether")];
     }
   }
 
-  return flag;
+  return await [flag, null];
 };
 
 export const processesAirdrop = async () => {
@@ -89,17 +98,6 @@ export const processesAirdrop = async () => {
   });
 
   console.log(processesAirdropList);
-
-  // const web3 = new Web3(provider);// hex representation of the key
-
-  // web3.eth.getStorageAt(
-  //   smartContractAddresses,  // address of the contract to read from
-  //   web3.utils.sha3(key + slot, { encoding: 'hex' }),  // keccak256(k . p)
-  //   function (err, result) {
-  //     console.log(result);
-  //     return result;// 00...0 for false, 00...1 for true, both 32 bytes wide
-  //   }
-  // );
 };
 
 export const checkAdmin = async () => {
@@ -126,6 +124,6 @@ export const addAddressForAirDrop = async (address, amount) => {
   }
 
   return tokenContract.methods
-    .addAddressForAirDrop(address, Web3.utils.toWei(`${amount}`))
+    .addAddressForAirDrop(address, Web3.utils.toWei(`${amount}`, "ether"))
     .send({ from: selectedAccount });
 };
