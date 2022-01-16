@@ -102,11 +102,11 @@ contract AirToken is ERC20 {
     );
 
     _processesAirdrop[_recipient] = true;
-    _currentAirdropAmount += (_airdropAmountList[index] * 10**18);
-    _transfer(_admin, _recipient, (_airdropAmountList[index] * 10**18));
+    _currentAirdropAmount += _airdropAmountList[index];
+    _transfer(_admin, _recipient, _airdropAmountList[index]);
     emit AirdropProcessed(
       _recipient,
-      (_airdropAmountList[index] * 10**18),
+      _airdropAmountList[index],
       block.timestamp
     );
   }
