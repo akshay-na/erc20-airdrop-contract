@@ -4,10 +4,10 @@ pragma solidity >=0.8.10;
 
 // import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract AirToken is ERC20 {
-  mapping(address => bool) public _processesAirdrop;
+  mapping(address => bool) public _processedAirdrop;
 
   address private _admin;
   address[] public _airdropAddressList;
@@ -65,6 +65,11 @@ contract AirToken is ERC20 {
     }
   }
 
+  function cleatAirdropList() external onlyAdmin {
+    delete _airdropAddressList;
+    delete _airdropAmountList;
+  }
+
   // This function will help the admin to add more Token to the initial supply.
   function mint(address to, uint256 amount) external onlyAdmin {
     _mint(to, amount);
@@ -79,7 +84,7 @@ contract AirToken is ERC20 {
     uint256 index;
     uint8 flag = 1;
     require(
-      _processesAirdrop[_recipient] == false,
+      _processedAirdrop[_recipient] == false,
       "Airdrop already Processed for this address"
     );
 
@@ -101,7 +106,7 @@ contract AirToken is ERC20 {
       "Airdropped 100% of the allocated amount"
     );
 
-    _processesAirdrop[_recipient] = true;
+    _processedAirdrop[_recipient] = true;
     _currentAirdropAmount += _airdropAmountList[index];
     _transfer(_admin, _recipient, _airdropAmountList[index]);
     emit AirdropProcessed(
@@ -125,5 +130,9 @@ contract AirToken is ERC20 {
 
   function getAllocatedAmount() external view returns (uint256[] memory) {
     return _airdropAmountList;
+  }
+
+  function getProcessedAirdrop(address _address) external view returns (bool) {
+    return _processedAirdrop[_address];
   }
 }
