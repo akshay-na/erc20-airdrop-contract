@@ -1,159 +1,148 @@
-import { useState, useEffect } from "react";
-import { ethers } from "ethers";
-import { init } from "./web3client.js";
-import erc20abi from "./AirToken.json";
-import ErrorMessage from "./ErrorMessage";
-import TxList from "./TxList";
+import React from "react";
+import { useState } from "react";
+import {
+  init,
+  claimToken,
+  isWhitelisted,
+  addAddressForAirDrop,
+  checkAdmin,
+  processesAirdrop,
+} from "./web3client.js";
 
 function App() {
-
-  const [txs, setTxs] = useState([]);
-  const [contractListened, setContractListened] = useState();
-  const [error, setError] = useState();
-  const contractInfo = {
-    address: "0x0946d0549A8f1e5853d0e6c2154E08562244da09",
-    tokenName: "Airdrop Token",
-    tokenSymbol: "ATN",
-    totalSupply: "100000"
-  };
-  const [balanceInfo, setBalanceInfo] = useState({
-    address: "-",
-    balance: "-"
+  const [message, setMessage] = useState({
+    text: "",
+    color: "",
   });
+  const [errorMessage1, setErrorMessage1] = useState("");
 
-  useEffect(() => {
-    init();
-  }, []);
-
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const erc20 = new ethers.Contract(contractInfo.address, erc20abi, provider);
-
-    const tokenName = await erc20.name();
-    const tokenSymbol = await erc20.symbol();
-    const totalSupply = await erc20.totalSupply();
-  };
-
-  const getMyBalance = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const erc20 = new ethers.Contract(contractInfo.address, erc20abi, provider);
-    const signer = await provider.getSigner();
-    const signerAddress = await signer.getAddress();
-    const balance = await erc20.balanceOf(signerAddress);
-
-    setBalanceInfo({
-      address: signerAddress,
-      balance: String(balance)
+  const claim = async () => {
+    let transactionHash;
+    await init();
+    setMessage({
+      text: "",
+      color: "",
     });
+    console.log(isWhitelisted());
+
+    if (await isWhitelisted()) {
+      await claimToken()
+        .then((tx) => {
+          console.log(tx);
+          transactionHash = tx.transactionHash;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+
+      setMessage({
+        text: `Yey, Airdrop Completed. Check your transaction at
+        https://ropsten.etherscan.io//tx/${transactionHash.toLowerCase()}`,
+        color: "blue",
+      });
+    } else {
+      console.log("This address is not whitelisted");
+      setMessage({
+        text: "This address is not whitelisted for the airdrop",
+        color: "red",
+      });
+    }
   };
 
-  const handleTransfer = async e => {
+  const whitelistAddress = async (e) => {
     e.preventDefault();
-    const data = new FormData(e.target);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = await provider.getSigner();
-    const erc20 = new ethers.Contract(contractInfo.address, erc20abi, signer);
-    await erc20.transfer(data.get("recipient"), data.get("amount"));
+    setErrorMessage1("");
+    await init();
+    if (await checkAdmin()) {
+      const data = new FormData(e.target);
+
+      await addAddressForAirDrop(data.get("address"), data.get("amount"))
+        .then((tx) => {
+          console.log(tx);
+          console.log(typeof tx);
+          console.log(tx.transactionHash);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      setErrorMessage1(
+        "Only Admin of the contract can add address to whitelist"
+      );
+    }
   };
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
       <div>
-        <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
-          <div className="p-4">
+        {/* <form className="m-4" onSubmit={() => claim()}> */}
+        <div className="credit-card w-full lg:w-3/4 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
+          <main className="mt-4 p-4">
+            <h1 className="text-xl font-bold text-gray-700 text-center">
+              Airtoken Airdrop
+            </h1>
+            <br />
+            <h5 className=" card-title text-gray-700">
+              How to claim your tokens?
+            </h5>
+            <div className=" card-text text-gray-700">
+              <ul>
+                <li>
+                  <b>Step 1: </b> Make sure you have configured the Rinkeby
+                  network with Metamask
+                </li>
+                <br />
+                <li>
+                  <b>Step 2: </b> Make sure you have some ETH to pay for
+                  transaction fees (~10-20 USD worth of ETH, paid to the network
+                </li>
+                <br />
+                <li>
+                  <b>Step 3: </b>Enter your ETH address and click on submit.
+                  This will check if you are eligible for the airdrop or not
+                </li>
+                <br />
+                <li>
+                  <b>Step 4: </b> Confirm the transaction to claim your ATN
+                  tokens. This will send a transaction to the Airdrop smart
+                  contract
+                </li>
+                <br />
+              </ul>
+            </div>
+            <div className="">
+              <div className="my-3">
+                <p className=" card-text text-gray-700 font-bold">
+                  Your ETH Address:
+                </p>
+                <br />
+                <h5 className=" card-title text-gray-700">Place Holder</h5>
+                <div className="p-4"></div>
+              </div>
+              {message.text && (
+                <p
+                  className={
+                    "error text-" + message.color + "-700 text-center font-bold"
+                  }
+                  style={{ whiteSpace: "pre" }}
+                >
+                  {" "}
+                  {message.text}{" "}
+                </p>
+              )}
+            </div>
+          </main>
+          <footer className="p-4">
             <button
-              onClick={getMyBalance}
               type="submit"
               className="btn btn-primary submit-button focus:ring focus:outline-none w-full"
+              onClick={() => claim()}
             >
-              Check My ATN Balance
+              Claim Airdrop
             </button>
-          </div>
-          <div className="px-4">
-            <div className="overflow-x-auto">
-              <table className="table w-full">
-                <thead>
-                  <tr>
-                    <th>Address</th>
-                    <th>Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th>{balanceInfo.address}</th>
-                    <td>{balanceInfo.balance}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          </footer>
         </div>
-        <form className="m-4" onSubmit={handleSubmit}>
-          <div className="credit-card w-full lg:w-3/4 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
-            <main className="mt-4 p-4">
-              <h1 className="text-xl font-bold text-gray-700 text-center">
-                Airtoken Airdrop
-              </h1>
-              <br />
-              <h5 className=" card-title text-gray-700">
-                How to claim your tokens?
-              </h5>
-              <div className=" card-text text-gray-700">
-                <ul>
-                  <li>
-                    <b>Step 1: </b> Make sure you have configured the Rinkeby
-                    network with Metamask
-                  </li>
-                  <br />
-                  <li>
-                    <b>Step 2: </b> Make sure you have some ETH to pay for
-                    transaction fees (~10-20 USD worth of ETH, paid to the
-                    network
-                  </li>
-                  <br />
-                  <li>
-                    <b>Step 3: </b>Enter your ETH address and click on submit.
-                    This will check if you are eligible for the airdrop or not
-                  </li>
-                  <br />
-                  <li>
-                    <b>Step 4: </b> Confirm the transaction to claim your ATN
-                    tokens. This will send a transaction to the Airdrop smart
-                    contract
-                  </li>
-                  <br />
-                </ul>
-              </div>
-              <div className="">
-                <div className="my-3">
-                  <p className=" card-text text-gray-700 font-bold">
-                    Enter you ETH Address:
-                  </p>
-                  <br />
-                  <input
-                    type="text"
-                    name="addr"
-                    className="input input-bordered block w-full focus:ring focus:outline-none"
-                    placeholder="ERC20 Address"
-                  />
-                </div>
-              </div>
-            </main>
-            <footer className="p-4">
-              <button
-                type="submit"
-                className="btn btn-primary submit-button focus:ring focus:outline-none w-full"
-              >
-                Claim Airdrop
-              </button>
-            </footer>
-          </div>
-        </form>
+        {/* </form> */}
       </div>
       <div>
         <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
@@ -161,22 +150,30 @@ function App() {
             <h1 className="text-xl font-semibold text-gray-700 text-center">
               For Admin Only
             </h1>
-            <form onSubmit={handleTransfer}>
+            <form onSubmit={whitelistAddress}>
               <div className="my-3">
                 <input
                   type="text"
-                  name="recipient"
+                  name="address"
                   className="input input-bordered block w-full focus:ring focus:outline-none"
                   placeholder="Address"
                 />
               </div>
               <div className="my-3">
                 <input
-                  type="text"
+                  type="number"
                   name="amount"
                   className="input input-bordered block w-full focus:ring focus:outline-none"
                   placeholder="Amount to transfer"
                 />
+              </div>
+              <div>
+                {errorMessage1 && (
+                  <p className="error text-red-700 text-center font-bold">
+                    {" "}
+                    {errorMessage1}{" "}
+                  </p>
+                )}
               </div>
               <footer className="p-4">
                 <button

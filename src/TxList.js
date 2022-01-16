@@ -1,8 +1,8 @@
-export default function TxList({txs}) {
+export default function TxList({ txs }) {
   if (txs.length === 0) return null;
   return (
     <>
-      {txs.map(item => (
+      {txs.map((item) => (
         <div key={item.txHash} className="alert-info mt-5 rounded-xl py-2 px-4">
           <div>
             <p>From: {item.from}</p>
