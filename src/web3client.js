@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import AirTokenBuild from "contracts/AirToken.json";
+import AirTokenBuild from "./AirToken.json";
 
 let smartContractAddresses = "0xdE84Be91e69ec7c87D2d6a4612653e6f1E2C1b5b";
 let adminAddress = "0x0946d0549A8f1e5853d0e6c2154E08562244da09";
