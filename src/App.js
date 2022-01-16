@@ -20,6 +20,7 @@ function App() {
 
   const claim = async (e) => {
     e.preventDefault();
+    const data = new FormData(e.target);
     let transactionHash;
     await init();
     setMessage({
@@ -27,8 +28,6 @@ function App() {
       color: "",
       txLink: "",
     });
-
-    const data = new FormData(e.target);
 
     setLoading(true);
 
