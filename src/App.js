@@ -18,6 +18,14 @@ function App() {
   });
   const [errorMessage1, setErrorMessage1] = useState("");
 
+
+  // This function validates the user address and checks the following parameter.
+  // Checks if user address is whitelisted or not.
+  // If whitelisted, it will check if the user is already claimed the airdrop or not.
+  // If not, it will validate the amount provided by the user with the allotted amount by the admin.
+  // If all thr above validations are passed, then the function will proceed with the airdrop transaction.
+  // Here user should pay the tx gas fee to claim their aur drop.
+
   const claim = async (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -73,6 +81,9 @@ function App() {
       });
     }
   };
+
+  // This function first validates whether the user is a admin or a regular user.
+  // If the user is admin, it will proceed to initiate a transaction to add user address to whitelisted address listed.
 
   const whitelistAddress = async (e) => {
     e.preventDefault();

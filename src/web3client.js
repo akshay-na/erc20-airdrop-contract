@@ -9,6 +9,12 @@ let isInitialized = false;
 let accountList = [];
 let amountList = [];
 
+
+
+// Checks and connects with the user metamask and establishes
+// a connection to contract using the contract abi and address.
+// Also it validates the network and checks whether the user is connected to ropsten network or not.
+
 export const init = async () => {
   let provider = window.ethereum;
 
@@ -41,11 +47,15 @@ export const init = async () => {
 
   if (!(await web3.eth.net.getNetworkType() === "ropsten")) {
     alert("You are not on Ropsten Network. Please switch metamask to Ropsten network then press ok to continue!");
-    await init();
+    window.location.reload(false);
   }
 
   isInitialized = true;
 };
+
+
+// The function proceed with the airdrop transaction.
+// Here user should pay the tx gas fee to claim their aur drop.
 
 export const claimToken = async () => {
   if (!isInitialized) {
@@ -57,6 +67,9 @@ export const claimToken = async () => {
     .send({ from: selectedAccount });
 };
 
+
+// Returns a bool value from the smart contract, to determine whether the user is already claimed the airdrop or not.
+
 export const isProcessed = async () => {
   if (!isInitialized) {
     await init();
@@ -66,6 +79,8 @@ export const isProcessed = async () => {
     .getProcessedAirdrop(selectedAccount)
     .call();
 };
+
+// Returns a bool value if the address is in the whitelisted address array in smart contract.
 
 export const isWhitelisted = async () => {
   if (!isInitialized) {
@@ -92,19 +107,8 @@ export const isWhitelisted = async () => {
   return await [flag, null];
 };
 
-export const processesAirdrop = async () => {
-  // let provider = window.ethereum;
-  // let slot = "0".repeat(64);  // hex uint256 representation of 0
-  let key = "0x509840449916fc49913baf920ac4c7e4d541e0c4";
-  let processesAirdropList = [];
 
-  // processesAirdropList = await tokenContract._processesAirdrop.call(key);
-  await tokenContract._processesAirdrop.call(key, function (err, res) {
-    console.log(res);
-  });
-
-  console.log(processesAirdropList);
-};
+//Checks whether the user is a admin when adding new address to whitelisted address list.
 
 export const checkAdmin = async () => {
   if (!isInitialized) {
@@ -123,6 +127,8 @@ export const checkAdmin = async () => {
     return flag;
   }
 };
+
+// This function will initiate a transaction to add a new address to the white listed account list.
 
 export const addAddressForAirDrop = async (address, amount) => {
   if (!isInitialized) {
