@@ -18,7 +18,6 @@ function App() {
   });
   const [errorMessage1, setErrorMessage1] = useState("");
 
-
   // This function validates the user address and checks the following parameter.
   // Checks if user address is whitelisted or not.
   // If whitelisted, it will check if the user is already claimed the airdrop or not.
@@ -246,6 +245,41 @@ function App() {
                 </button>
               </footer>
             </form>
+          </div>
+        </div>
+        <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
+          <div className="mt-4 p-4">
+            <h1 className="text-xl font-semibold text-gray-700 text-center">
+              Contract Details
+            </h1>
+            <div className=" card-text text-gray-700">
+              <ul>
+                <li>
+                  <b>Token Name:</b> Airdrop Token
+                </li>
+                <br />
+                <li>
+                  <b>Symbol:</b> ATN
+                </li>
+                <br />
+                <li>
+                  <b>Initial Supply:</b> 1,00,000 ATN
+                </li>
+                <br />
+                <li>
+                  <b>Max Airdrop:</b> 30,000 ATN
+                </li>
+                <br />
+                <li className="text-blue-700">
+                  <u>
+                    <a href="https://ropsten.etherscan.io/address/0xde84be91e69ec7c87d2d6a4612653e6f1e2c1b5b">
+                      <b>Contract Address:</b>{" "}
+                      0xdE84Be91e69ec7c87D2d6a4612653e6f1E2C1b5b
+                    </a>
+                  </u>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

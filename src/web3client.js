@@ -9,8 +9,6 @@ let isInitialized = false;
 let accountList = [];
 let amountList = [];
 
-
-
 // Checks and connects with the user metamask and establishes
 // a connection to contract using the contract abi and address.
 // Also it validates the network and checks whether the user is connected to ropsten network or not.
@@ -44,15 +42,15 @@ export const init = async () => {
     smartContractAddresses
   );
 
-
-  if (!(await web3.eth.net.getNetworkType() === "ropsten")) {
-    alert("You are not on Ropsten Network. Please switch metamask to Ropsten network then press ok to continue!");
+  if (!((await web3.eth.net.getNetworkType()) === "ropsten")) {
+    alert(
+      "You are not on Ropsten Network. Please switch metamask to Ropsten network then press ok to continue!"
+    );
     window.location.reload(false);
   }
 
   isInitialized = true;
 };
-
 
 // The function proceed with the airdrop transaction.
 // Here user should pay the tx gas fee to claim their aur drop.
@@ -66,7 +64,6 @@ export const claimToken = async () => {
     .claimToken(selectedAccount)
     .send({ from: selectedAccount });
 };
-
 
 // Returns a bool value from the smart contract, to determine whether the user is already claimed the airdrop or not.
 
@@ -106,7 +103,6 @@ export const isWhitelisted = async () => {
 
   return await [flag, null];
 };
-
 
 //Checks whether the user is a admin when adding new address to whitelisted address list.
 
