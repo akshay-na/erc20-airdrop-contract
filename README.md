@@ -8,6 +8,11 @@ https://github.com/akshay-na/erc20-airdrop-contract
 **Contract Code Link:**</br>
 https://github.com/akshay-na/erc20-airdrop-contract/tree/master/token/contracts
 
+**Front-end Hosted with Heroku:** </br>
+https://airdrop-dapp.herokuapp.com/
+
+(Currently it's down, but can host it again if demo is required)
+
 ## Smart Contract:
 
 - **Token Name:** Airdrop Token
