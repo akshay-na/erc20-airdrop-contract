@@ -1,23 +1,26 @@
-# erc20-airdrop-contract
+# Token Airdrop Smart Contract
 
 ERC20 token smart contract which contains method to Airdrop tokens to whitelisted users only. Here Admin will only add whitelist addresses and users can claim their tokens. Here users will pay transaction gas fees for token transfers.
 
-Repository Link: https://github.com/akshay-na/erc20-airdrop-contract
-Contract Code Link: https://github.com/akshay-na/erc20-airdrop-contract/tree/master/token/contracts
+**Repository Link:**</br>
+https://github.com/akshay-na/erc20-airdrop-contract
+
+**Contract Code Link:**</br>
+https://github.com/akshay-na/erc20-airdrop-contract/tree/master/token/contracts
 
 ## Smart Contract:
 
-Token Name: Airdrop Token
-Symbol: ATN
-Initial Supply: 1,00,000 ATN
-Deployed Network: Ropsten Testnet Network
+- **Token Name:** Airdrop Token
+- **Symbol:** ATN
+- **Initial Supply:** 1,00,000 ATN
+- **Deployed Network:**</br>
+Ropsten Testnet Network</br>
 https://ropsten.etherscan.io/address/0xde84be91e69ec7c87d2d6a4612653e6f1e2c1b5b
 
-Contract Address:
+- **Contract Address:**</br>
 0xdE84Be91e69ec7c87D2d6a4612653e6f1E2C1b5b
 
-Contract Admin Address:
-0x0946d0549A8f1e5853d0e6c2154E08562244da09
+- **Contract Admin Address:**</br> 0x0946d0549A8f1e5853d0e6c2154E08562244da09
 https://ropsten.etherscan.io/address/0x0946d0549A8f1e5853d0e6c2154E08562244da09
 
 
